@@ -38,13 +38,16 @@ model = Pipeline(steps=[('preprocessor', preprocessor),
 
 # Define the parameter grid for the random forest
 param_grid = {
-    'regressor__n_estimators': [10, 50, 100, 200],
-    'regressor__max_depth': [None, 10, 20, 30],
-    'regressor__min_samples_split': [2, 5, 10]
+    'regressor__n_estimators': [180, 190, 205],
+    'regressor__max_depth': [30, 32,  38], 
+    'regressor__max_features': [0.8, 0.9, 1.0],
+    'regressor__min_samples_split': [2, 5]
 }
-
+cv = KFold(n_splits=5, shuffle=True, random_state=42)
 # Set up the grid search
-grid_search = GridSearchCV(model, param_grid, cv=5)
+# Search grid 
+grid_search = GridSearchCV(model, param_grid=param_grid, cv=cv, n_jobs=-1)  # n_jobs=-1 to use all CPU cores
+
 
 # Train the model using the grid search estimator
 # This will take the pipeline and find the best parameters

@@ -8,11 +8,12 @@ from sklearn.preprocessing import MinMaxScaler
 from torch import nn
 def get_fred_data(series_ids, fred_api_key, aqi_api_key, zipcode):
     # Dataframe
-    df = pd.DataFrame(columns=["Series ID", "Value"])
-    aggregation_method = "avg"
-    file_type = "json"
+    df = pd.DataFrame()
+    
+    
     for series_id in series_ids:
-
+        aggregation_method = "avg"
+        file_type = "json"
         # URL
         if series_id == "FPCPITOTLZGUSA":
             url = f"https://api.stlouisfed.org/fred/series/observations?series_id=FPCPITOTLZGUSA&realtime_start=2023-01-01&sort_order=desc&limit=1&api_key={fred_api_key}&file_type=json"
@@ -30,19 +31,29 @@ def get_fred_data(series_ids, fred_api_key, aqi_api_key, zipcode):
             data = json.loads(response.content)
 
             # Get the most recent value
-        if data["observations"]:
-            most_recent_value = float(data["observations"][0]["value"])
-            
-            # Add the value to the DataFrame
-            df[series_id] = [most_recent_value]
-        else:
-            print("Error: No observations found for series ID " + series_id)
+            if data["observations"]:
+                most_recent_value = float(data["observations"][0]["value"])
+                df.loc[0, series_id] = most_recent_value
+            else:
+                print("Error: No observations found for series ID " + series_id)
 
     # Get the AQI data
     avg_aqi = get_avg_aqi(zipcode, aqi_api_key)
-    df['avg_aqi'] = [avg_aqi]
+    df.loc[0, 'Average AQI'] = avg_aqi
 
+    # Request user input for year, quarter, and state
+
+    df = {
+        'CSUSHPINSA': 123.4,
+        'FPCPITOTLZGUSA': 123.4,
+        'CSCICP03USM665S': 110.2, 
+        'MSACSR': 102.7,
+        'EMVELECTGOVRN': 10000,
+        'USSTHPI': 280,
+        'ROWFDNA027N': 123        
+    }
     return df
+
 
 
 
@@ -79,38 +90,6 @@ def get_avg_aqi(zipcode, api_key):
 
 
 
-df = get_fred_data(["FPCPITOTLZGUSA","CSCICP03USM665S","USSTHPI","CSUSHPINSA","Year", "MSACSR","EMVELECTGOVRN","ROWFDNA027N"], os.environ.get("FRED_API_KEY"), os.environ.get("AIRNOW_API_KEY"), "35806")
-
-# Assume prev_year_price is the input previous year price
-prev_year_price = input("Please enter the previous year price: ")
-
-# Add it to the DataFrame
-df['Prev_Year_Price'] = float(prev_year_price)
-
-# Assume state is the input state
-state = input("Please enter the state: ")
-
-# Add it to the DataFrame
-df['State'] = state
-
-# Handling categorical variable 'State' by using one hot encoding
-df = pd.get_dummies(df, columns=['State'])
-
-# If the new data is missing some states that were present in the training data,
-# you'll need to add those columns and fill with zeros. You'll need a list of all
-# states that were in the training data. This is just a placeholder, replace with
-# your actual list of states.
-all_states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY']
-
-for state in all_states:
-    if state not in df.columns:
-        df[state] = 0
-
-
-# Convert the DataFrame to a numpy array
-array = df.values
-
-
-# Define the PyTorch model
-
-
+df = get_fred_data(["FPCPITOTLZGUSA","CSCICP03USM665S","USSTHPI","CSUSHPINSA","Year", "MSACSR","EMVELECTGOVRN","ROWFDNA027N"], os.environ.get("FRED_API_KEY"), os.environ.get("AIRNOW_API_KEY"), "35749")
+df.columns.append("State")
+print(df)

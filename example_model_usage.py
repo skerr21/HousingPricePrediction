@@ -17,7 +17,8 @@ input_data = {
   'Year': 1993,
   'Average AQI': 90,
   'State': 'CA',
-  'Quarter': 3 
+  'Quarter': 3,
+  'Prev_Year_Median_Price': 250000
 }
 
 # Create dataframe 
