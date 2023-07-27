@@ -1,0 +1,4 @@
+Params,MSE,R2
+"{'model__max_depth': 25, 'model__max_features': 0.8, 'model__min_samples_split': 2, 'model__n_estimators': 200}",587.8081351591172,0.9650917990880967
+"{'model__max_depth': 30, 'model__max_features': 0.8, 'model__min_samples_split': 2, 'model__n_estimators': 190}",404.93203090117686,0.9776580038781094
+"{'model__max_depth': 32, 'model__max_features': 0.9, 'model__min_samples_split': 2, 'model__n_estimators': 190}",297.3215747001556,0.9825354798088856
