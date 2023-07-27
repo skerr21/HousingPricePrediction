@@ -1,25 +1,36 @@
-import torch
-from torch import nn
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
+from joblib import load
 
-# Define the PyTorch model
-class LinearRegression(nn.Module):
-    def __init__(self, input_size):
-        super(LinearRegression, self).__init__()
-        self.linear = nn.Linear(input_size, 1)
-        
-    def forward(self, x):
-        out = self.linear(x)
-        return out
+# Load model
+model = load('best_model.pkl') 
 
-# Create a model instance - replace 13 with the number of features in your dataset
-model = LinearRegression(13)  # replace 13 with the number of features in your dataset
+# Sample input data
+input_data = {
+  'CSUSHPINSA': 123.4,
+  'FPCPITOTLZGUSA': 123.4,
+  'CSCICP03USM665S': 110.2, 
+  'MSACSR': 102.7,
+  'EMVELECTGOVRN': 10000,
+  'USSTHPI': 280,
+  'ROWFDNA027N': 123,
+  'Year': 1993,
+  'Average AQI': 90,
+  'State': 'CA',
+  'Quarter': 3 
+}
 
-# Load the saved parameters
-model.load_state_dict(torch.load('model_previous_price.pth'))
+# Create dataframe 
+df = pd.DataFrame(input_data, index=[0])
 
-# Put the model in evaluation mode
-model.eval()
+# One-hot encode state
+ohe = OneHotEncoder()
+df = pd.concat([df, pd.DataFrame(ohe.fit_transform(df[['State']]).toarray())], axis=1)
 
-# Now the model is ready to make predictions
-# Assume inputs is your input data as a PyTorch tensor
-# predictions = model(inputs)
+# Remove original state column
+# df.drop(columns=['State'], inplace=True)
+
+# Make prediction
+prediction = model.predict(df)
+
+print('Predicted Price:', prediction[0])

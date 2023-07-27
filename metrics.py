@@ -112,45 +112,5 @@ array = df.values
 
 
 # Define the PyTorch model
-class LinearRegression(nn.Module):
-    def __init__(self, input_size):
-        super(LinearRegression, self).__init__()
-        self.linear = nn.Linear(input_size, 1)
-        
-    def forward(self, x):
-        out = self.linear(x)
-        return out
 
-# Create a model instance - replace 13 with the number of features in your dataset
-model = LinearRegression(61)  # replace 13 with the number of features in your dataset
-
-# Load the saved parameters
-model.load_state_dict(torch.load('model_previous_price.pth'))
-
-# Put the model in evaluation mode
-model.eval()
-
-# Now the model is ready to make predictions
-# Assume inputs is your input data as a PyTorch tensor
-# predictions = model(inputs)
-
-
-# Normalize the data using the same scaler used in training
-# You need to save the scaler used in training and load it here.
-# For the purpose of the example, we're creating a new MinMaxScaler.
-# In your code, replace this with loading the saved scaler.
-# Load the scaler
-scaler = joblib.load('scaler.gz')
-
-# Assume 'array' is your new data
-# Use the scaler to transform your new data
-array_scaled = scaler.transform(array)
-
-
-
-# Convert the numpy array to a PyTorch tensor
-tensor = torch.tensor(array_scaled, dtype=torch.float)
-
-# Now you can pass this tensor to your model to get predictions
-predictions = model(tensor)
 
