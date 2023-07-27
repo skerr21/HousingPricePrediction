@@ -3,9 +3,9 @@ import json
 import pandas as pd
 import os
 import joblib
-import torch
 from sklearn.preprocessing import MinMaxScaler
 from torch import nn
+
 def get_fred_data(series_ids, fred_api_key, aqi_api_key, zipcode):
     # Dataframe
     df = pd.DataFrame()
@@ -91,7 +91,7 @@ def get_avg_aqi(zipcode, api_key):
 
 
 
-df = get_fred_data(["FPCPITOTLZGUSA","CSCICP03USM665S","USSTHPI","CSUSHPINSA","Year", "MSACSR","EMVELECTGOVRN","ROWFDNA027N"], os.environ.get("FRED_API_KEY"), os.environ.get("AIRNOW_API_KEY"), "35749")
+df = get_fred_data(["FPCPITOTLZGUSA","CSCICP03USM665S","USSTHPI","CSUSHPINSA","Year", "MSACSR","EMVELECTGOVRN","ROWFDNA027N"], os.environ.get("FRED_API_KEY"), os.environ.get("AIRNOW_API_KEY"), "96101")
 # Get user input for state
 state = input("Enter the state: ")
 year = input("Enter the year: ")
@@ -103,7 +103,8 @@ df['State'] = state
 df['Year'] = year
 df['Quarter'] = quarter
 df['Prev_Year_Median_Price'] = prev_year_median_price
-model = joblib.load('best_model.pkl')
+model = joblib.load('best_model2.pkl')
+
 print(df)
 prediction = model.predict(df)
 print(prediction)
