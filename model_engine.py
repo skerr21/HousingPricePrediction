@@ -36,7 +36,7 @@ pipeline = Pipeline(steps=[('preprocessor', preprocessor),
 # Simplify param_grid
 param_grid = {
     'model__n_estimators': [180, 190, 200],
-    'model__max_depth': [30, 32, 34], 
+    'model__max_depth': [30, 32, 34],  
     'model__max_features': [0.8, 0.9, 1.0],
     'model__min_samples_split': [2, 5]  
 }
@@ -65,9 +65,6 @@ print(grid_search.best_params_)
 predictions = best_model.predict(X_test)
 mse = mean_squared_error(y_test, predictions)
 r2 = r2_score(y_test, predictions)
-
-print("MSE:", mse)
-print("R-squared:", r2) 
 
 # Save model
 joblib.dump(best_model, 'best_model.pkl')
