@@ -1,6 +1,5 @@
 import pandas as pd, joblib
-from sklearn.model_selection import GridSearchCV, KFold
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GridSearchCV, KFold, train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
@@ -13,8 +12,8 @@ encoder = LabelEncoder()
 
 
 # Identify the numerical and categorical columns
-numerical_cols = df.drop(['State', 'Price'], axis=1).columns
-categorical_cols = ['State']
+numerical_cols = df.drop(['State', 'Quarter', 'Price'], axis=1).columns
+categorical_cols = ['State', 'Quarter']
 
 # Define preprocessing steps
 numeric_transformer = StandardScaler()
@@ -46,20 +45,25 @@ param_grid = {
 cv = KFold(n_splits=5, shuffle=True, random_state=42)
 # Set up the grid search
 # Search grid 
-grid_search = GridSearchCV(model, param_grid=param_grid, cv=cv, n_jobs=-1)  # n_jobs=-1 to use all CPU cores
+grid_search = GridSearchCV(model, param_grid, cv=5, verbose=2, n_jobs=-1)
 
-
-# Train the model using the grid search estimator
-# This will take the pipeline and find the best parameters
+# Fit grid search
 grid_search.fit(X_train, y_train)
+print("Iteration | MSE")
+for i, params in enumerate(grid_search.cv_results_['params']):
+    print(f"{i} | {-grid_search.cv_results_['mean_test_score'][i]:.3f}")
 
-# Print the best parameters it found
-print("Best parameters:")
+print("Best Parameters:")
 print(grid_search.best_params_)
+# Get best model
+best_model = grid_search.best_estimator_
 
-# Evaluate the model
-print("Model score on test data:")
-print(grid_search.score(X_test, y_test))
+# Evaluate model on test set
+predictions = best_model.predict(X_test)
+mse = mean_squared_error(y_test, predictions)
 
-# Save the model
-joblib.dump(grid_search, 'model.pkl')
+
+
+# Save model
+
+joblib.dump(best_model, 'best_model2.pkl') 

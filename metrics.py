@@ -43,15 +43,16 @@ def get_fred_data(series_ids, fred_api_key, aqi_api_key, zipcode):
 
     # Request user input for year, quarter, and state
 
-    df = {
-        'CSUSHPINSA': 123.4,
-        'FPCPITOTLZGUSA': 123.4,
-        'CSCICP03USM665S': 110.2, 
-        'MSACSR': 102.7,
-        'EMVELECTGOVRN': 10000,
-        'USSTHPI': 280,
-        'ROWFDNA027N': 123        
-    }
+    df.columns = [
+    'CSUSHPINSA',
+    'FPCPITOTLZGUSA',
+    'CSCICP03USM665S', 
+    'MSACSR',
+    'EMVELECTGOVRN',
+    'USSTHPI',
+    'ROWFDNA027N',
+    'Average AQI'
+    ]
     return df
 
 
@@ -91,5 +92,18 @@ def get_avg_aqi(zipcode, api_key):
 
 
 df = get_fred_data(["FPCPITOTLZGUSA","CSCICP03USM665S","USSTHPI","CSUSHPINSA","Year", "MSACSR","EMVELECTGOVRN","ROWFDNA027N"], os.environ.get("FRED_API_KEY"), os.environ.get("AIRNOW_API_KEY"), "35749")
-df.columns.append("State")
+# Get user input for state
+state = input("Enter the state: ")
+year = input("Enter the year: ")
+quarter = input("Enter the quarter: ")
+prev_year_median_price=input("Enter the previous year median price: ")
+# Add state column with input value 
 print(df)
+df['State'] = state
+df['Year'] = year
+df['Quarter'] = quarter
+df['Prev_Year_Median_Price'] = prev_year_median_price
+model = joblib.load('best_model.pkl')
+print(df)
+prediction = model.predict(df)
+print(prediction)
